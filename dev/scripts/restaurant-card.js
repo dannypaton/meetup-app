@@ -6,7 +6,7 @@ class RestaurantCard extends React.Component {
       return (
         <div class="restaurantCard">
             <div class="restaurantCard_show">
-
+              
             </div>
         </div>
       )

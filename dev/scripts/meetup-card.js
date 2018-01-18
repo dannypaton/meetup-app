@@ -13,6 +13,8 @@ class MeetupCard extends React.Component {
               <p>Group Name: {this.props.events.group.name}</p>
               <p>Venue: {this.props.events.venue.name}</p>
               <p>Venue Address: {this.props.events.venue.address_1}</p>
+              <button onClick={() => {this.fetchRestaurants(this.props.lat, this.props.lng)}}>
+              find restaurants near this meetup</button>
             </div>
         </div>
       )
