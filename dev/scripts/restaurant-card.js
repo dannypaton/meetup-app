@@ -4,9 +4,9 @@ class RestaurantCard extends React.Component {
     render() {
       console.log(this, 'this inside the restaurants card')
       return (
-        <div class="restaurantCard">
-            <div class="restaurantCard_show">
-              
+        <div className="restaurantCard">
+            <div className="restaurantCard_show">
+
             </div>
         </div>
       )

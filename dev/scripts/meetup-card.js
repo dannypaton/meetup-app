@@ -2,18 +2,17 @@ import React from 'react';
 
 class MeetupCard extends React.Component {
     render() {
-      console.log(this, 'this inside the meetup card')
+      // console.log(this, 'this inside the meetup card');
       return (
-        <div class="meetupCard">
-            <div class="meetupCard_show">
-              <h2>Meetup Name: {this.props.events.name}</h2>
-              <p>Start Date: {this.props.events.local_date}</p>
-              <p>Start Time: {this.props.events.local_time}</p>
-              <p>RSVP Count: {this.props.events.yes_rsvp_count}</p>
-              <p>Group Name: {this.props.events.group.name}</p>
-              <p>Venue: {this.props.events.venue.name}</p>
-              <p>Venue Address: {this.props.events.venue.address_1}</p>
-              <button onClick={() => {this.fetchRestaurants(this.props.lat, this.props.lng)}}>
+        <div className="meetupCard">
+            <div className="meetupCard_show">
+              <h2>Meetup Name: {this.props.name}</h2>
+              <p>Location: {this.props.group.localized_location}</p>
+              {this.props.local_date ? <p>Start Date and Time: {this.props.local_date} at {this.props.local_time}</p> : ''}
+              <p>RSVP Count: {this.props.yes_rsvp_count}</p>
+              <p>Meetup Group Name: {this.props.group.name}</p>
+              <p>Link to Meetup: <a href={this.props.link}>{this.props.link}</a></p>
+              <button onClick={() => {this.props.fetchRestaurants(this.props.lat, this.props.lng)}}>
               find restaurants near this meetup</button>
             </div>
         </div>
@@ -22,6 +21,3 @@ class MeetupCard extends React.Component {
 }
 
 export default MeetupCard
-
-
-/* <h2>{this.props.name}</h2> */

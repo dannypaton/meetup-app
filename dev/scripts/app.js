@@ -14,18 +14,17 @@ class App extends React.Component {
       restaurants: []
     }
 
+    this.fetchLocation = this.fetchLocation.bind(this)
     this.fetchMeetups = this.fetchMeetups.bind(this)
     this.fetchRestaurants = this.fetchRestaurants.bind(this)
-    this.fetchLocation = this.fetchLocation.bind(this)
   }
 
   fetchLocation(term) {
     if (!term) return;
-
     // users enters a search term
     this.setState({ searchTerm: term })
 
-    // key, city, lat, lon
+    // api key, city
     const API_KEY = 'e261f184e7e19432d1c4c4178174d18';
     const city = term;
 
@@ -45,33 +44,37 @@ class App extends React.Component {
 
   fetchMeetups(lat, lon) {
     if (!lat || !lon) return;
-
-    // key
     const API_KEY = 'e261f184e7e19432d1c4c4178174d18';
 
     // make next api call to /find/upcoming_events with that latitude and longitude 
-    // do the fetch GET request
-    fetch(`https://api.meetup.com/find/upcoming_events?&send=true&photo-host=public&radius=10&lat=${lat}&lon=${lon}&key=${API_KEY}`)
+    // do the fetch request
+    fetch(`https://api.meetup.com/find/upcoming_events?&send=true&photo-host=public&radius=10&page=6&lat=${lat}&lon=${lon}&key=${API_KEY}`)
     .then(response => response.json())    
     .then(response => {
-      console.log(response, 'fetchMeetups fetch request')
       response.events;
+      // console.log(response.events[0].group.lon, 'fetchMeetups fetch request');
 
       // setState --> update the events
       this.setState({ events: response.events})
+      this.fetchRestaurants(response.events[0].group.lat, response.events[0].group.lon);
+
+      // console.log(this.state.events[0].group.name);
     })
   }
 
   fetchRestaurants(lat, lng) {
     // key, lat, lng
-    // const API_KEY = 'AIzaSyCz5aY9PL8W3G-ijl7Tvu_sRsX7U6QVTYU';
-    // const lat = 'results.geometry.location.lat';
-    // const lng = 'results.geometry.location.lng';
+    const API_KEY = 'AIzaSyCz5aY9PL8W3G-ijl7Tvu_sRsX7U6QVTYU';
+    const latitude = lat;
+    const longitude = lng;
 
     // do the fetch GET request
-    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lon}&radius=500&type=restaurant&key=${API_KEY}`)
+    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=500&type=restaurant&key=${API_KEY}`)
+    .then(response => response.json())
     .then(response => {
       response.restaurants;
+      // console.log(response.restaurants.events.name, 'fetchRestaurants fetch request');
+
       this.setState({ restaurants: response.restaurants});
     })
   }
@@ -86,7 +89,7 @@ class App extends React.Component {
         <div>
           {this.state.events ?
             this.state.events.map((event) => {
-              <MeetupCard {...event} fetchRestaurants={this.fetchRestaurants} />              
+              return <MeetupCard {...event} fetchRestaurants={this.fetchRestaurants} />              
             }) 
             : ''
           }
@@ -94,7 +97,7 @@ class App extends React.Component {
         <div>
           {this.state.restaurants ?
             this.state.restaurants.map((restaurant) => {
-              <RestaurantCard {...restaurant} />              
+              return <RestaurantCard {...restaurant} />              
             }) 
             : ''
           }
