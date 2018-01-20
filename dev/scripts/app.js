@@ -30,7 +30,7 @@ class App extends React.Component {
 
     // do the fetch request
     // make api call to /2/cities
-    fetch(`https://api.meetup.com/2/cities?&sign=true&photo-host=public&query=${city}&page=1&key=${API_KEY}`)
+    fetch(`https://api.meetup.com/2/cities?&sign=true&photo-host=public&query=${city}&page=1&key=${API_KEY}`, { mode: 'no-cors' })
     .then(response => response.json())
     .then(response => {
       // push the response to searchTerm in state
@@ -48,7 +48,7 @@ class App extends React.Component {
 
     // make next api call to /find/upcoming_events with that latitude and longitude 
     // do the fetch request
-    fetch(`https://api.meetup.com/find/upcoming_events?&send=true&photo-host=public&radius=10&page=6&lat=${lat}&lon=${lon}&key=${API_KEY}`)
+    fetch(`https://api.meetup.com/find/upcoming_events?&send=true&photo-host=public&radius=10&page=6&lat=${lat}&lon=${lon}&key=${API_KEY}`, { mode: 'no-cors' })
     .then(response => response.json())  
     .then(response => {
       response.events;
@@ -65,7 +65,7 @@ class App extends React.Component {
     const long = lng;
 
     // do the fetch GET request
-    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lati},${long}&radius=100&type=restaurant&key=${API_KEY}`)
+    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lati},${long}&radius=100&type=restaurant&key=${API_KEY}`, { mode: 'no-cors' })
     .then(response => response.json())
     .then(response => {
       console.log(response.results, 'fetchRestaurants fetch request');
