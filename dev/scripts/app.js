@@ -11,7 +11,9 @@ class App extends React.Component {
     this.state = {
       searchTerm: '',
       events: [],
-      restaurants: []
+      restaurants: [],
+      searchTermLat: 0,
+      searchTermLon: 0
     }
 
     this.fetchLocation = this.fetchLocation.bind(this)
@@ -30,42 +32,45 @@ class App extends React.Component {
 
     // do the fetch request
     // make api call to /2/cities
-    fetch(`https://api.meetup.com/2/cities?&sign=true&photo-host=public&query=${city}&page=1&key=${API_KEY}`, { mode: 'no-cors' })
+    fetch(`https://api.meetup.com/2/cities?&sign=true&photo-host=public&query=${city}&page=1&key=${API_KEY}`)
     .then(response => response.json())
     .then(response => {
       // push the response to searchTerm in state
-      this.setState({ term: response.searchTerm });
+      this.setState({ term: response.searchTerm, searchTermLat: response.results[0].lat, searchTermLon: response.results[0].lon });
 
       // when it finishes and you have your response then call the fetch meetups function
       // take the latitude and longitude from that response
-      this.fetchMeetups(response.results[0].lat, response.results[0].lon);
+      this.fetchMeetups(this.state.searchTermLat, this.state.searchTermLon);
     })
   }
-
-  fetchMeetups(lat, lon) {
-    if (!lat || !lon) return;
+  
+  fetchMeetups() {
     const API_KEY = 'e261f184e7e19432d1c4c4178174d18';
-
+    
     // make next api call to /find/upcoming_events with that latitude and longitude 
     // do the fetch request
-    fetch(`https://api.meetup.com/find/upcoming_events?&send=true&photo-host=public&radius=10&page=6&lat=${lat}&lon=${lon}&key=${API_KEY}`, { mode: 'no-cors' })
+    fetch(`https://api.meetup.com/find/upcoming_events?&send=true&photo-host=public&radius=10&page=6&fields=group_key_photo&lat=${this.state.searchTermLat}&lon=${this.state.searchTermLon}&key=${API_KEY}`)
     .then(response => response.json())  
     .then(response => {
       response.events;
-
-      this.setState({ events: response.events})
-      this.fetchRestaurants(response.events[0].group.lat, response.events[0].group.lon);
+      console.log(response.events, ' inside search click')
+      
+      this.setState({ events: response.events});
     })
   }
 
-  fetchRestaurants(lat, lng) {
+  fetchRestaurants(eventLocation) {
     // key, lat, lng
     const API_KEY = 'AIzaSyCz5aY9PL8W3G-ijl7Tvu_sRsX7U6QVTYU';
-    const lati = lat;
-    const long = lng;
+    let lati = this.state.searchTermLat;
+    let long = this.state.searchTermLon;
+    if (eventLocation !== null && (eventLocation.lat && eventLocation.lon)) {
+      lati = eventLocation.lat;
+      long = eventLocation.lon;
+    }
 
-    // do the fetch GET request
-    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lati},${long}&radius=100&type=restaurant&key=${API_KEY}`, { mode: 'no-cors' })
+    // // do the fetch GET request
+    fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lati},${long}&radius=5000&type=restaurant&key=${API_KEY}`)
     .then(response => response.json())
     .then(response => {
       console.log(response.results, 'fetchRestaurants fetch request');
@@ -76,24 +81,23 @@ class App extends React.Component {
   }
 
   render() {
-    // console.log(this.state.searchTerm, 'search in app file')
     return (
       <div>
         <header>
           <SearchBar fetchLocation={this.fetchLocation} />
         </header>
-        <div>
+        <div className="meetupCard">
           {this.state.events ?
-            this.state.events.map((event) => {
-              return <MeetupCard {...event} fetchRestaurants={this.fetchRestaurants} />              
+            this.state.events.map((event, i) => {
+              return <MeetupCard key={i} {...event} fetchRestaurants={this.fetchRestaurants} />              
             }) 
             : ''
           }
         </div>
         <div>
           {this.state.restaurants ?
-            this.state.restaurants.map((restaurant) => {
-              return <RestaurantCard {...restaurant} />              
+            this.state.restaurants.map((restaurant, i) => {
+              return <RestaurantCard key={i} {...restaurant} />              
             }) 
             : ''
           }

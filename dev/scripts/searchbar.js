@@ -25,9 +25,9 @@ class SearchBar extends React.Component {
     return (
       <div className="searchBar">
         <form onSubmit={this.handleSubmit} >
-          <h2>Search for meetup's in your city below!</h2>
+          <h1>Search for meetup's in your city!</h1>
           <input type="text" value={this.state.searchTerm} onChange={this.handleChange} className="location" name="searchTerm" />
-          <input type="submit" />
+          <input className="search button purple" type="submit" />
         </form>
       </div>
     )
